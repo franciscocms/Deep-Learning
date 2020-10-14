@@ -4,4 +4,4 @@ Repository with implementation of Deep Learning architectures:
 
 By far, includes:
 * U-Net
-* ResNet (only implemented for 18 version - intended to generalise in the future)
+* ResNet (only implemented for the 18 and 34-layers versions)
