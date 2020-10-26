@@ -128,17 +128,26 @@ class ResNetEncoder(nn.Module):
                 nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
             )
 
-
-        if bottleneck_size == 2:
-            self.blocks = nn.Sequential(
-                self.block(self.block_sizes[0], self.block_sizes[0], depth = depths[0], bottleneck_size = bottleneck_size),
-                *[self.block(self.block_sizes[k], self.block_sizes[k + 1], depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
-            )
-        elif bottleneck_size == 3:
-            self.blocks = nn.Sequential(
-                self.block(self.block_sizes[0], self.block_sizes[0]*4, depth = depths[0], bottleneck_size = bottleneck_size),
-                *[self.block(self.block_sizes[k]*4, self.block_sizes[k + 1]*4, depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
-            )
+        if unet_encoder:
+            if bottleneck_size == 2:
+                self.blocks = nn.Sequential(
+                    *[self.block(self.block_sizes[k], self.block_sizes[k + 1], depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
+                )
+            elif bottleneck_size == 3:
+                self.blocks = nn.Sequential(
+                    *[self.block(self.block_sizes[k]*4, self.block_sizes[k + 1]*4, depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
+                )
+        else:
+            if bottleneck_size == 2:
+                self.blocks = nn.Sequential(
+                    self.block(self.block_sizes[0], self.block_sizes[0], depth = depths[0], bottleneck_size = bottleneck_size),
+                    *[self.block(self.block_sizes[k], self.block_sizes[k + 1], depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
+                )
+            elif bottleneck_size == 3:
+                self.blocks = nn.Sequential(
+                    self.block(self.block_sizes[0], self.block_sizes[0]*4, depth = depths[0], bottleneck_size = bottleneck_size),
+                    *[self.block(self.block_sizes[k]*4, self.block_sizes[k + 1]*4, depth = depths[k+1], bottleneck_size = bottleneck_size) for k in range(len(depths) -1)]       
+                )
 
     def forward(self, x):
 
