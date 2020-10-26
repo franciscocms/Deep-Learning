@@ -104,7 +104,7 @@ class ResNetResidualBlock(nn.Module):
         return x
 
 class ResNetEncoder(nn.Module):
-    def __init__(self, in_channels, depths, bottleneck_size, block_sizes, activation='relu'):
+    def __init__(self, in_channels, depths, bottleneck_size, block_sizes, unet_encoder, activation='relu'):
         super().__init__()
         
         self.in_channels = in_channels
@@ -113,13 +113,21 @@ class ResNetEncoder(nn.Module):
         self.block_sizes = block_sizes
         self.n = len(self.block_sizes)
 
-        
-        self.gate = nn.Sequential(
-            nn.Conv2d(self.in_channels, self.block_sizes[0], kernel_size=7, stride=2, padding=3, bias=False),
-            nn.BatchNorm2d(self.block_sizes[0]),
-            activation_func(activation),
-            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        )
+        if unet_encoder:
+            self.gate = nn.Sequential(
+                nn.Conv2d(self.in_channels, self.block_sizes[0], kernel_size = 3, stride = 1, padding = 1, bias=False),
+                nn.BatchNorm2d(self.block_sizes[0]),
+                activation_func(activation),
+
+            )
+        else:
+            self.gate = nn.Sequential(
+                nn.Conv2d(self.in_channels, self.block_sizes[0], kernel_size=7, stride=2, padding=3, bias=False),
+                nn.BatchNorm2d(self.block_sizes[0]),
+                activation_func(activation),
+                nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            )
+
 
         if bottleneck_size == 2:
             self.blocks = nn.Sequential(
@@ -154,10 +162,10 @@ class ResNetClassifier(nn.Module):
         return x
 
 class ResNet(nn.Module):
-    def __init__(self, in_channels, n_classes, depths, block_sizes, bottleneck_size):
+    def __init__(self, in_channels, n_classes, depths, block_sizes, bottleneck_size, unet_encoder):
         super().__init__()
 
-        self.encoder = ResNetEncoder(in_channels, depths, bottleneck_size, block_sizes)
+        self.encoder = ResNetEncoder(in_channels, depths, bottleneck_size, block_sizes, unet_encoder)
         self.classifier = ResNetClassifier(self.encoder.blocks[-1].out_channels, n_classes)
         
     def forward(self, x):
@@ -168,19 +176,19 @@ class ResNet(nn.Module):
 from torchsummary import summary
 import torchvision.models as models
 
-def resnet18(in_channels, n_classes):
-    return ResNet(in_channels, n_classes, depths = [2,2,2,2], block_sizes = [64, 128, 256, 512], bottleneck_size = 2)
+def resnet18(in_channels, n_classes, unet_encoder):
+    return ResNet(in_channels, n_classes, depths = [2,2,2,2], block_sizes = [64, 128, 256, 512], bottleneck_size = 2, unet_encoder = unet_encoder)
 
-def resnet34(in_channels, n_classes):
-    return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 2)
+def resnet34(in_channels, n_classes, unet_encoder):
+    return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 2, unet_encoder = unet_encoder)
 
-def resnet50(in_channels, n_classes):
-    return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3)
+def resnet50(in_channels, n_classes, unet_encoder):
+    return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
-def resnet101(in_channels, n_classes):
-    return ResNet(in_channels, n_classes, depths = [3,4,23,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3)
+def resnet101(in_channels, n_classes, unet_encoder):
+    return ResNet(in_channels, n_classes, depths = [3,4,23,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
-def resnet152(in_channels, n_classes):
-    return ResNet(in_channels, n_classes, depths = [3,8,36,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3)
+def resnet152(in_channels, n_classes, unet_encoder):
+    return ResNet(in_channels, n_classes, depths = [3,8,36,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
 
