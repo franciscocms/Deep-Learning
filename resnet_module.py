@@ -194,17 +194,25 @@ def resnet18(in_channels, n_classes, unet_encoder):
 def resnet34(in_channels, n_classes, unet_encoder):
     if unet_encoder:
         return ResNet(in_channels, n_classes, depths = [3,4,6,3,3], block_sizes = [64, 128, 256, 512, 1024], bottleneck_size = 2, unet_encoder = unet_encoder)
-        #return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 2, unet_encoder = unet_encoder)
     else:
         return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 2, unet_encoder = unet_encoder)
 
 def resnet50(in_channels, n_classes, unet_encoder):
-    return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
+    if unet_encoder:
+        return ResNet(in_channels, n_classes, depths = [3,4,6,3,3], block_sizes = [64, 128, 256, 512, 1024], bottleneck_size = 3, unet_encoder = unet_encoder)
+    else:
+        return ResNet(in_channels, n_classes, depths = [3,4,6,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
 def resnet101(in_channels, n_classes, unet_encoder):
-    return ResNet(in_channels, n_classes, depths = [3,4,23,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
+    if unet_encoder:
+        return ResNet(in_channels, n_classes, depths = [3,4,23,3,3], block_sizes = [64, 128, 256, 512, 1024], bottleneck_size = 3, unet_encoder = unet_encoder)
+    else:
+        return ResNet(in_channels, n_classes, depths = [3,4,23,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
 def resnet152(in_channels, n_classes, unet_encoder):
-    return ResNet(in_channels, n_classes, depths = [3,8,36,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
+    if unet_encoder:
+        return ResNet(in_channels, n_classes, depths = [3,8,36,3,3], block_sizes = [64, 128, 256, 512, 1024], bottleneck_size = 3, unet_encoder = unet_encoder)
+    else:
+        return ResNet(in_channels, n_classes, depths = [3,8,36,3], block_sizes = [64, 128, 256, 512], bottleneck_size = 3, unet_encoder = unet_encoder)
 
 
